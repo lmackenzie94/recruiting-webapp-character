@@ -1,27 +1,38 @@
-import { useState } from 'react';
 import { CharacterAttributes } from './CharacterAttributes';
 import { CharacterClasses } from './CharacterClasses';
 import { CharacterSkills } from './CharacterSkills';
+import { SkillCheck } from './SkillCheck';
 
-export const CharacterSheet = ({ character }) => {
-  const [attributes, setAttributes] = useState(character.attributes);
-  const [skills, setSkills] = useState(character.skills);
+export const CharacterSheet = ({ character, updateCharacter }) => {
+  const handleAttributeChange = (attribute, value) => {
+    const newAttributes = { ...character.attributes, [attribute]: value };
+    updateCharacter(character.name, {
+      ...character,
+      attributes: newAttributes
+    });
+  };
+
+  const handleSkillChange = (skill, value) => {
+    const newSkills = { ...character.skills, [skill]: value };
+    updateCharacter(character.name, { ...character, skills: newSkills });
+  };
 
   return (
     <div className="border-2 border-yellow-300 rounded-md p-4">
       <h2 className="text-xl font-bold font-mono mb-4">
         Character: {character.name}
       </h2>
+      <SkillCheck character={character} />
       <div className="grid grid-cols-3 gap-4">
         <CharacterAttributes
-          attributes={attributes}
-          setAttributes={setAttributes}
+          attributes={character.attributes}
+          handleAttributeChange={handleAttributeChange}
         />
-        <CharacterClasses attributes={attributes} />
+        <CharacterClasses attributes={character.attributes} />
         <CharacterSkills
-          attributes={attributes}
-          skills={skills}
-          setSkills={setSkills}
+          skills={character.skills}
+          attributes={character.attributes}
+          handleSkillChange={handleSkillChange}
         />
       </div>
     </div>

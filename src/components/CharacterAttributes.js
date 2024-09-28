@@ -2,29 +2,13 @@ import { useMemo } from 'react';
 import { MAX_TOTAL_ATTRIBUTES } from '../consts';
 import { calculateAttributeModifier } from '../utils';
 
-export const CharacterAttributes = ({ attributes, setAttributes }) => {
+export const CharacterAttributes = ({ attributes, handleAttributeChange }) => {
   const totalAttributes = useMemo(
     () => calculateTotalAttributes(attributes),
     [attributes]
   );
 
   const maxedOutAttributes = totalAttributes >= MAX_TOTAL_ATTRIBUTES;
-
-  const handleIncrement = attribute => {
-    const nextAttributeValue = attributes[attribute] + 1;
-    setAttributes(prevAttributes => ({
-      ...prevAttributes,
-      [attribute]: nextAttributeValue
-    }));
-  };
-
-  const handleDecrement = attribute => {
-    const nextAttributeValue = attributes[attribute] - 1;
-    setAttributes(prevAttributes => ({
-      ...prevAttributes,
-      [attribute]: nextAttributeValue
-    }));
-  };
 
   return (
     <div className="flex flex-col gap-2 p-4 border-2 border-gray-300 rounded-md">
@@ -38,8 +22,7 @@ export const CharacterAttributes = ({ attributes, setAttributes }) => {
             key={attribute}
             name={attribute}
             value={attributes[attribute]}
-            handleIncrement={handleIncrement}
-            handleDecrement={handleDecrement}
+            handleAttributeChange={handleAttributeChange}
             maxedOutAttributes={maxedOutAttributes}
           />
         ))}
@@ -51,8 +34,7 @@ export const CharacterAttributes = ({ attributes, setAttributes }) => {
 const Attribute = ({
   name,
   value,
-  handleIncrement,
-  handleDecrement,
+  handleAttributeChange,
   maxedOutAttributes
 }) => {
   const modifier = calculateAttributeModifier(value);
@@ -60,12 +42,17 @@ const Attribute = ({
     <div className="flex flex-row gap-2">
       <span className="font-bold">{name}</span>
       <button
-        onClick={() => handleIncrement(name)}
+        onClick={() => handleAttributeChange(name, value + 1)}
         disabled={maxedOutAttributes}
       >
         +
       </button>
-      <button onClick={() => handleDecrement(name)}>-</button>
+      <button
+        onClick={() => handleAttributeChange(name, value - 1)}
+        disabled={value === 0}
+      >
+        -
+      </button>
       <span>Value: {value}</span>
       <span>Modifier: {modifier}</span>
     </div>

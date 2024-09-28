@@ -1,7 +1,9 @@
-import { useState } from 'react';
 import './App.css';
-import { Characters } from './components/Characters.js';
-import { ATTRIBUTE_LIST, SKILL_LIST } from './consts.js';
+import { CharacterSheet } from './components/CharacterSheet.js';
+import { SkillResults } from './components/SkillResults.js';
+import { useCharacters } from './hooks/useCharacters.js';
+import { PartySkillCheck } from './components/PartyKillCheck.js';
+import { SkillResultsProvider } from './contexts/skillResults.js';
 
 // CHARACTER OBJECT:
 // {
@@ -19,51 +21,57 @@ import { ATTRIBUTE_LIST, SKILL_LIST } from './consts.js';
 //   }
 // }
 
-const initialAttributes = ATTRIBUTE_LIST.reduce((acc, attribute) => {
-  acc[attribute] = 10;
-  return acc;
-}, {});
-
-const initialSkills = SKILL_LIST.reduce((acc, skill) => {
-  acc[skill.name] = 0;
-  return acc;
-}, {});
-
 function App() {
-  const [characters, setCharacters] = useState([]);
-  const [newCharacterName, setNewCharacterName] = useState('');
+  const {
+    characters,
+    addCharacter,
+    updateCharacter,
+    saveCharacters,
+    removeAllCharacters,
+    resetAllCharacters
+  } = useCharacters();
 
   const handleAddCharacter = e => {
     e.preventDefault();
-    const newCharacter = {
-      name: newCharacterName,
-      attributes: initialAttributes,
-      skills: initialSkills
-    };
-
-    setCharacters([...characters, newCharacter]);
-    setNewCharacterName('');
+    addCharacter(e.target.characterName.value);
+    e.target.reset();
   };
 
   return (
-    <div className="App">
-      <header className="App-header py-4">
-        <h1 className="text-2xl font-black">PolicyMe | Character Sheets</h1>
-      </header>
-      <main className="App-section">
-        <form onSubmit={handleAddCharacter} className="my-4">
-          <input
-            type="text"
-            placeholder="Character Name"
-            value={newCharacterName}
-            onChange={e => setNewCharacterName(e.target.value)}
-            className="text-black"
-          />
-          <button type="submit">Create Character</button>
-        </form>
-        <Characters characters={characters} />
-      </main>
-    </div>
+    <SkillResultsProvider>
+      <div className="App">
+        <header className="App-header py-4">
+          <h1 className="text-2xl font-black">PolicyMe | Character Sheets</h1>
+        </header>
+        <main className="App-section">
+          <form onSubmit={handleAddCharacter} className="my-4">
+            <input
+              type="text"
+              name="characterName"
+              placeholder="Character Name"
+              className="text-black"
+            />
+            <button type="submit">Create Character</button>
+          </form>
+          <div className="flex gap-2 my-4 justify-center">
+            <button onClick={saveCharacters}>Save Characters</button>
+            <button onClick={resetAllCharacters}>Reset Characters</button>
+            <button onClick={removeAllCharacters}>Remove All Characters</button>
+          </div>
+          <SkillResults />
+          <PartySkillCheck characters={characters} />
+          <section className="container mx-auto">
+            {characters.map(character => (
+              <CharacterSheet
+                key={character.name}
+                character={character}
+                updateCharacter={updateCharacter}
+              />
+            ))}
+          </section>
+        </main>
+      </div>
+    </SkillResultsProvider>
   );
 }
 

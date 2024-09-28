@@ -2,10 +2,9 @@ import { useMemo } from 'react';
 import { INITIAL_POINTS_TO_SPEND, SKILL_LIST } from '../consts';
 import { calculateAttributeModifier } from '../utils';
 
-export const CharacterSkills = ({ attributes, skills, setSkills }) => {
+export const CharacterSkills = ({ attributes, skills, handleSkillChange }) => {
   // update points to spend when Intelligence attribute changes
   const pointsToSpend = useMemo(() => {
-    console.log('attributes.Intelligence', attributes.Intelligence);
     return (
       INITIAL_POINTS_TO_SPEND +
       4 * calculateAttributeModifier(attributes.Intelligence)
@@ -29,9 +28,9 @@ export const CharacterSkills = ({ attributes, skills, setSkills }) => {
             key={skillName}
             skill={skillName}
             skillPoints={points}
-            setSkills={setSkills}
             attributes={attributes}
             isOutOfPoints={isOutOfPoints}
+            handleSkillChange={handleSkillChange}
           />
         ))}
       </div>
@@ -41,10 +40,10 @@ export const CharacterSkills = ({ attributes, skills, setSkills }) => {
 
 const Skill = ({
   skill,
-  setSkills,
   skillPoints,
   attributes,
-  isOutOfPoints
+  isOutOfPoints,
+  handleSkillChange
 }) => {
   const modifier = SKILL_LIST.find(s => s.name === skill).attributeModifier;
   const modifierValue = calculateAttributeModifier(attributes[modifier]);
@@ -52,11 +51,13 @@ const Skill = ({
   const totalPoints = skillPoints + modifierValue;
 
   const handleIncrement = () => {
-    setSkills(prevSkills => ({ ...prevSkills, [skill]: skillPoints + 1 }));
+    const newSkillPoints = skillPoints + 1;
+    handleSkillChange(skill, newSkillPoints);
   };
 
   const handleDecrement = () => {
-    setSkills(prevSkills => ({ ...prevSkills, [skill]: skillPoints - 1 }));
+    const newSkillPoints = skillPoints - 1;
+    handleSkillChange(skill, newSkillPoints);
   };
 
   return (
