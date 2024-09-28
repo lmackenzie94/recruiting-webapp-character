@@ -4,6 +4,7 @@ import { SkillResults } from './components/SkillResults.js';
 import { useCharacters } from './hooks/useCharacters.js';
 import { PartySkillCheck } from './components/PartyKillCheck.js';
 import { SkillResultsProvider } from './contexts/skillResults.js';
+import { AddCharacterForm } from './components/AddCharacterForm.js';
 
 // CHARACTER OBJECT:
 // {
@@ -31,12 +32,6 @@ function App() {
     resetAllCharacters
   } = useCharacters();
 
-  const handleAddCharacter = e => {
-    e.preventDefault();
-    addCharacter(e.target.characterName.value);
-    e.target.reset();
-  };
-
   return (
     <SkillResultsProvider>
       <div className="App">
@@ -44,15 +39,7 @@ function App() {
           <h1 className="text-2xl font-black">PolicyMe | Character Sheets</h1>
         </header>
         <main className="App-section">
-          <form onSubmit={handleAddCharacter} className="my-4">
-            <input
-              type="text"
-              name="characterName"
-              placeholder="Character Name"
-              className="text-black"
-            />
-            <button type="submit">Create Character</button>
-          </form>
+          <AddCharacterForm addCharacter={addCharacter} />
           <div className="flex gap-2 my-4 justify-center">
             <button onClick={saveCharacters}>Save Characters</button>
             <button onClick={resetAllCharacters}>Reset Characters</button>

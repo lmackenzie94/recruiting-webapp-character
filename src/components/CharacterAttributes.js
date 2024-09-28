@@ -2,13 +2,21 @@ import { useMemo } from 'react';
 import { MAX_TOTAL_ATTRIBUTES } from '../consts';
 import { calculateAttributeModifier } from '../utils';
 
-export const CharacterAttributes = ({ attributes, handleAttributeChange }) => {
+export const CharacterAttributes = ({ character, updateCharacter }) => {
   const totalAttributes = useMemo(
-    () => calculateTotalAttributes(attributes),
-    [attributes]
+    () => calculateTotalAttributes(character.attributes),
+    [character.attributes]
   );
 
   const maxedOutAttributes = totalAttributes >= MAX_TOTAL_ATTRIBUTES;
+
+  const handleAttributeChange = (attribute, value) => {
+    const newAttributes = { ...character.attributes, [attribute]: value };
+    updateCharacter(character.name, {
+      ...character,
+      attributes: newAttributes
+    });
+  };
 
   return (
     <div className="flex flex-col gap-2 p-4 border-2 border-gray-300 rounded-md">
@@ -17,11 +25,11 @@ export const CharacterAttributes = ({ attributes, handleAttributeChange }) => {
         Total Attributes: {totalAttributes}
       </p>
       <div className="flex flex-col gap-2">
-        {Object.keys(attributes).map(attribute => (
+        {Object.entries(character.attributes).map(([attribute, value]) => (
           <Attribute
             key={attribute}
             name={attribute}
-            value={attributes[attribute]}
+            value={value}
             handleAttributeChange={handleAttributeChange}
             maxedOutAttributes={maxedOutAttributes}
           />

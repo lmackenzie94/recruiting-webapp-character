@@ -2,16 +2,24 @@ import { useMemo } from 'react';
 import { INITIAL_POINTS_TO_SPEND, SKILL_LIST } from '../consts';
 import { calculateAttributeModifier } from '../utils';
 
-export const CharacterSkills = ({ attributes, skills, handleSkillChange }) => {
+export const CharacterSkills = ({ character, updateCharacter }) => {
   // update points to spend when Intelligence attribute changes
   const pointsToSpend = useMemo(() => {
     return (
       INITIAL_POINTS_TO_SPEND +
-      4 * calculateAttributeModifier(attributes.Intelligence)
+      4 * calculateAttributeModifier(character.attributes.Intelligence)
     );
-  }, [attributes.Intelligence]);
+  }, [character.attributes.Intelligence]);
 
-  const pointsSpent = getTotalPointsSpent(skills, attributes);
+  const handleSkillChange = (skill, value) => {
+    const newSkills = { ...character.skills, [skill]: value };
+    updateCharacter(character.name, { ...character, skills: newSkills });
+  };
+
+  const pointsSpent = getTotalPointsSpent(
+    character.skills,
+    character.attributes
+  );
   const isOutOfPoints = pointsSpent >= pointsToSpend;
 
   return (
@@ -23,12 +31,12 @@ export const CharacterSkills = ({ attributes, skills, handleSkillChange }) => {
         Points spent: {pointsSpent}
       </p>
       <div className="flex flex-col gap-2">
-        {Object.entries(skills).map(([skillName, points]) => (
+        {Object.entries(character.skills).map(([skillName, points]) => (
           <Skill
             key={skillName}
             skill={skillName}
             skillPoints={points}
-            attributes={attributes}
+            attributes={character.attributes}
             isOutOfPoints={isOutOfPoints}
             handleSkillChange={handleSkillChange}
           />
