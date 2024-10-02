@@ -24,7 +24,7 @@ export const AddCharacterForm = ({ addCharacter }) => {
         onChange={e => setCharacterName(e.target.value)}
         required
       />
-      <button type="submit">Create Character</button>
+      <button type="submit">Add Character</button>
     </form>
   );
 };
