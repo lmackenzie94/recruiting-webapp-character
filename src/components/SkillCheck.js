@@ -1,9 +1,6 @@
 import { useRef } from 'react';
-import { useSkillResults } from '../contexts/skillResults';
 
-// TODO: reduce duplication b/w PartySkillCheck and SkillCheck
-export const SkillCheck = ({ character }) => {
-  const { setSkillResults } = useSkillResults();
+export const SkillCheck = ({ onSubmit, skillOptions }) => {
   const skillRef = useRef(null);
   const dcRef = useRef(null);
 
@@ -12,7 +9,7 @@ export const SkillCheck = ({ character }) => {
     const selectedSkill = skillRef.current.value;
     const dc = dcRef.current.value;
     const roll = Math.floor(Math.random() * 20) + 1;
-    setSkillResults({ character, selectedSkill, dc, roll });
+    onSubmit({ selectedSkill, dc, roll });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -32,9 +29,9 @@ export const SkillCheck = ({ character }) => {
         <option value="" disabled>
           Select Skill
         </option>
-        {Object.keys(character.skills).map(skill => (
-          <option key={skill} value={skill}>
-            {skill}
+        {skillOptions.map(({ name, value }) => (
+          <option key={value} value={value}>
+            {name}
           </option>
         ))}
       </select>

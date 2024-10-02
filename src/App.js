@@ -25,12 +25,33 @@ import { AddCharacterForm } from './components/AddCharacterForm.js';
 function App() {
   const {
     characters,
+    loading,
+    error,
     addCharacter,
     updateCharacter,
     saveCharacters,
     removeAllCharacters,
     resetAllCharacters
   } = useCharacters();
+
+  const renderCharacterContent = () => {
+    if (loading) {
+      return <p>Loading characters...</p>;
+    }
+    if (error) {
+      return <p>Error loading characters: {error.message}</p>;
+    }
+    if (characters.length === 0) {
+      return <p>No characters saved yet</p>;
+    }
+    return characters.map(character => (
+      <CharacterSheet
+        key={character.name}
+        character={character}
+        updateCharacter={updateCharacter}
+      />
+    ));
+  };
 
   return (
     <SkillResultsProvider>
@@ -41,20 +62,32 @@ function App() {
         <main className="App-section">
           <AddCharacterForm addCharacter={addCharacter} />
           <div className="flex gap-2 my-4 justify-center">
-            <button onClick={saveCharacters}>Save Characters</button>
-            <button onClick={resetAllCharacters}>Reset Characters</button>
-            <button onClick={removeAllCharacters}>Remove All Characters</button>
+            <button
+              onClick={() => saveCharacters()}
+              disabled={loading || characters.length === 0}
+              className="disabled:opacity-50"
+            >
+              Save Characters
+            </button>
+            <button
+              onClick={resetAllCharacters}
+              disabled={loading || characters.length === 0}
+              className="disabled:opacity-50"
+            >
+              Reset Characters
+            </button>
+            <button
+              onClick={removeAllCharacters}
+              disabled={loading || characters.length === 0}
+              className="disabled:opacity-50"
+            >
+              Remove All Characters
+            </button>
           </div>
           <SkillResults />
           <PartySkillCheck characters={characters} />
           <section className="container mx-auto">
-            {characters.map(character => (
-              <CharacterSheet
-                key={character.name}
-                character={character}
-                updateCharacter={updateCharacter}
-              />
-            ))}
+            {renderCharacterContent()}
           </section>
         </main>
       </div>

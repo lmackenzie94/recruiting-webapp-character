@@ -1,3 +1,5 @@
+export const API_URL =
+  'https://recruiting.verylongdomaintotestwith.ca/api/{{lmackenzie94}}/character';
 export const MAX_TOTAL_ATTRIBUTES = 70;
 export const INITIAL_POINTS_TO_SPEND = 10;
 

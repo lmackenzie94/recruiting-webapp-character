@@ -1,7 +1,7 @@
 import { CharacterAttributes } from './CharacterAttributes';
 import { CharacterClasses } from './CharacterClasses';
 import { CharacterSkills } from './CharacterSkills';
-import { SkillCheck } from './SkillCheck';
+import { CharacterSkillCheck } from './CharacterSkillCheck';
 
 export const CharacterSheet = ({ character, updateCharacter }) => {
   return (
@@ -9,7 +9,7 @@ export const CharacterSheet = ({ character, updateCharacter }) => {
       <h2 className="text-xl font-bold font-mono mb-4">
         Character: {character.name}
       </h2>
-      <SkillCheck character={character} />
+      <CharacterSkillCheck character={character} />
       <div className="grid grid-cols-3 gap-4">
         <CharacterAttributes
           character={character}

@@ -35,7 +35,7 @@ export const CharacterSkills = ({ character, updateCharacter }) => {
           <Skill
             key={skillName}
             skill={skillName}
-            skillPoints={points}
+            points={points}
             attributes={character.attributes}
             isOutOfPoints={isOutOfPoints}
             handleSkillChange={handleSkillChange}
@@ -48,43 +48,47 @@ export const CharacterSkills = ({ character, updateCharacter }) => {
 
 const Skill = ({
   skill,
-  skillPoints,
+  points,
   attributes,
   isOutOfPoints,
   handleSkillChange
 }) => {
-  const modifier = SKILL_LIST.find(s => s.name === skill).attributeModifier;
-  const modifierValue = calculateAttributeModifier(attributes[modifier]);
-
-  const totalPoints = skillPoints + modifierValue;
+  // TODO: bug - skill points is what's being saved, not total points
+  const { modifierName, modifierValue } = getModifier(skill, attributes);
 
   const handleIncrement = () => {
-    const newSkillPoints = skillPoints + 1;
-    handleSkillChange(skill, newSkillPoints);
+    handleSkillChange(skill, points + 1);
   };
 
   const handleDecrement = () => {
-    const newSkillPoints = skillPoints - 1;
-    handleSkillChange(skill, newSkillPoints);
+    handleSkillChange(skill, points - 1);
   };
+
+  const totalPoints = points + modifierValue;
 
   return (
     <div key={skill} className="flex flex-row gap-2">
       <p>
-        {skill}: {skillPoints}
+        {skill}: {points}
       </p>
       <p>
-        (Modifier: {modifier}): {modifierValue}
+        (Modifier: {modifierName}): {modifierValue}
       </p>
       <button onClick={handleIncrement} disabled={isOutOfPoints}>
         +
       </button>
-      <button disabled={skillPoints <= 0} onClick={handleDecrement}>
+      <button disabled={points <= 0} onClick={handleDecrement}>
         -
       </button>
       <p>Total: {totalPoints}</p>
     </div>
   );
+};
+
+const getModifier = (skill, attributes) => {
+  const modifierName = SKILL_LIST.find(s => s.name === skill).attributeModifier;
+  const modifierValue = calculateAttributeModifier(attributes[modifierName]);
+  return { modifierName, modifierValue };
 };
 
 const getTotalSkillPoints = skills => {
